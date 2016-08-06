@@ -13,7 +13,7 @@ import config from './lib/config';
 import routes from './routes/index';
 import users from './routes/users';
 
-var app = express();
+let app = express();
 
 // view engine setup
 nunjucks.configure( 'views', {
@@ -21,7 +21,6 @@ nunjucks.configure( 'views', {
     express : app
 });
 
-// uncomment after placing your favicon in /public
 app.use( favicon ( path.join( __dirname, 'public', 'favicon.ico' ) ) );
 app.use( logger( 'dev' ) );
 app.use( bodyParser.json() );
@@ -30,10 +29,10 @@ app.use( cookieParser() );
 app.use( express.static( path.join( __dirname, 'public' ) ) );
 
 // configure Cartero Hook
-var outputDirPath = path.join( __dirname, config.get( 'assets.compilation.output-directory' ) );
-var h = hook( outputDirPath, {
-		outputDirUrl : config.get( 'assets.serving-url' )
-	} );
+let h = hook(
+	path.join( __dirname, config.get( 'assets.compilation.output-directory' ) ),
+	{ outputDirUrl : config.get( 'assets.serving-url' ) }
+);
 
 // Use Cartero Middleware (overrides res.render() method)
 app.use( carteroMiddleware( h ) );
@@ -42,8 +41,8 @@ app.use( '/', routes );
 app.use( '/users', users );
 
 // catch 404 and forward to error handler
-app.use( function( req, res, next ) {
-	var err = new Error( 'Not Found' );
+app.use( ( req, res, next ) => {
+	let err = new Error( 'Not Found' );
 	err.status = 404;
 	next( err );
 });
@@ -53,7 +52,7 @@ app.use( function( req, res, next ) {
 // development error handler
 // will print stacktrace
 if( app.get( 'env' ) === 'development' ) {
-	app.use( function( err, req, res, next ) {
+	app.use( ( err, req, res, next ) => {
 		res.status( err.status || 500 );
 		res.render( 'error/_error.nunj', {
 			message: err.message,
@@ -64,13 +63,12 @@ if( app.get( 'env' ) === 'development' ) {
 
 // production error handler
 // no stacktraces leaked to user
-app.use( function( err, req, res, next ) {
+app.use( ( err, req, res, next ) => {
 	res.status( err.status || 500 );
 	res.render( 'error/_error.nunj', {
 		message: err.message,
 		error: {}
 	}, 'error/error.main.es'  );
 } );
-
 
 module.exports = app;
