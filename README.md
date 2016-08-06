@@ -7,7 +7,7 @@ Compile assets:
 
 ```
 NODE_ENV=development npm run compile-assets
-``
+```
 
 Run server:
 ```
