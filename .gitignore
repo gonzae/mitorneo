@@ -37,3 +37,5 @@ jspm_packages
 .node_repl_history
 
 # Config files
+config/*
+!config/development.json.example
