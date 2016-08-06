@@ -10,8 +10,10 @@ import hook from 'cartero-node-hook';
 import carteroMiddleware from 'cartero-express-middleware';
 
 import config from './lib/config';
-import routes from './routes/index';
-import users from './routes/users';
+import views from './router/views';
+import api from './router/api';
+
+import errorPageMiddleware from './views/error/_error.es';
 
 let app = express();
 
@@ -37,8 +39,8 @@ let h = hook(
 // Use Cartero Middleware (overrides res.render() method)
 app.use( carteroMiddleware( h ) );
 
-app.use( '/', routes );
-app.use( '/users', users );
+app.use( '/', views );
+app.use( '/api', api );
 
 // catch 404 and forward to error handler
 app.use( ( req, res, next ) => {
@@ -54,10 +56,10 @@ app.use( ( req, res, next ) => {
 if( app.get( 'env' ) === 'development' ) {
 	app.use( ( err, req, res, next ) => {
 		res.status( err.status || 500 );
-		res.render( 'error/_error.nunj', {
+		errorPageMiddleware( req, res, {
 			message: err.message,
 			error: err
-		}, 'error/error.main.es' );
+		} );
 	} );
 }
 
@@ -65,10 +67,10 @@ if( app.get( 'env' ) === 'development' ) {
 // no stacktraces leaked to user
 app.use( ( err, req, res, next ) => {
 	res.status( err.status || 500 );
-	res.render( 'error/_error.nunj', {
+	errorPageMiddleware( req, res, {
 		message: err.message,
 		error: {}
-	}, 'error/error.main.es'  );
+	} );
 } );
 
 module.exports = app;
